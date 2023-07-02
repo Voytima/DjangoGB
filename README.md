@@ -1,5 +1,4 @@
 # GIT
-
 https://github.com/Voytima/DjangoGB
 
 # Python 3.10
