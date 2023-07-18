@@ -1,6 +1,7 @@
-from typing import Any, Dict
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
-from datetime import datetime
+
+from mainapp import models as mainapp_models
 
 
 class MainPageView(TemplateView):
@@ -12,18 +13,37 @@ class NewsPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["news_qs"] = mainapp_models.News.objects.all()[:5]
         
-        context["news_title"] = "First test header"
-        context["news_preview"] = "Preliminary first news description"
+        return context
+    
+class NewsPageDetailView(TemplateView):
+    template_name = "mainapp/news_detail.html"
 
-        context['range'] = range(5)
-        context['datetime_obj'] = datetime.now()
+    def get_context_data(self, pk=None, **kwargs):
+        context = super().get_context_data(pk=pk, **kwargs)
+        context["news_object"] = get_object_or_404(mainapp_models.News, pk=pk)
 
         return context
 
 class CoursesPageView(TemplateView):
     template_name = "mainapp/courses_list.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(CoursesPageView, self).get_context_data(**kwargs)
+        context["objects"] = mainapp_models.Course.objects.all()[:7]
+        return context
+    
+class CoursesDetailView(TemplateView):
+    template_name = "mainapp/courses_detail.html"
+
+    def get_context_data(self, pk=None, **kwargs):
+        context = super(CoursesDetailView, self).get_context_data(**kwargs)
+        context["course_object"] = get_object_or_404(mainapp_models.Course, pk=pk)
+        context["lessons"] = mainapp_models.Lesson.objects.filter(course=context["course_object"])
+        context["teachers"] = mainapp_models.CourseTeachers.objects.filter(course=context["course_object"])
+
+        return context
 
 class ContactsPageView(TemplateView):
     template_name = "mainapp/contacts.html"
