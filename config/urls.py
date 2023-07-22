@@ -21,6 +21,7 @@ Including another URLconf
 """
 
 urlpatterns = [
+    path('admin/', include('django_admin_filter.urls')),
     path("admin/", admin.site.urls),
     path("", RedirectView.as_view(url="mainapp/")),
     path("social_auth/", include("social_django.urls", namespace="social")),
