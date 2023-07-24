@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
@@ -23,14 +25,21 @@ class News(BaseModel):
     body_as_markdown = models.BooleanField(default=False, verbose_name='Markdown option')
 
     def __str__(self):
-        return f'#{self.pk} {self.title}'
+        return f'{self.pk} {self.title}'
     
     class Meta:
-        verbose_name = 'News'
-        verbose_name_plural = 'Many news'
+        verbose_name = _('News')
+        verbose_name_plural = _('Many news')
+
+
+class CoursesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(deleted=False)
+
     
     
-class Course(BaseModel):
+class Courses(BaseModel):
+    objects = CoursesManager()
     name = models.CharField(max_length=256, verbose_name='Name')
     description = models.TextField(verbose_name='Description', blank=True, null=True)
     description_as_markdown = models.BooleanField(verbose_name='As markdown', default=False)
@@ -41,12 +50,12 @@ class Course(BaseModel):
         return f'{self.pk} {self.name}'
     
     class Meta:
-        verbose_name = 'Course'
-        verbose_name_plural = 'Courses'
+        verbose_name = _('Course')
+        verbose_name_plural = _('Courses')
 
 
 class Lesson(BaseModel):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE)
     num = models.PositiveIntegerField(verbose_name='Lesson number')
     title = models.CharField(max_length=256, verbose_name='Name')
     description = models.TextField(verbose_name='Description', blank=True, null=True)
@@ -56,13 +65,13 @@ class Lesson(BaseModel):
         return f'{self.course.name} | {self.num} | {self.title}'
     
     class Meta:
-        verbose_name = 'Lesson'
-        verbose_name_plural = 'Lessons'
+        verbose_name = _('Lesson')
+        verbose_name_plural = _('Lessons')
         ordering = ('course', 'num')
 
 
 class CourseTeachers(BaseModel):
-    course = models.ManyToManyField(Course)
+    course = models.ManyToManyField(Courses)
     name_first = models.CharField(max_length=128, verbose_name='Name')
     name_last = models.CharField(max_length=128, verbose_name='Surname')
     day_birth = models.DateField(verbose_name='Birth date')
@@ -71,3 +80,24 @@ class CourseTeachers(BaseModel):
     def __str__(self) -> str:
         return '{0:0>3} {1} {2}'.format(self.pk, self.name_last, self.name_first)
     
+    class Meta:
+        verbose_name = _('Course teacher')
+        verbose_name_plural = _('Course teachers')
+
+
+class CourseFeedback(models.Model):
+    RATING = ((5, "⭐⭐⭐⭐⭐"), (4, "⭐⭐⭐⭐"), (3, "⭐⭐⭐"), (2, "⭐⭐"),
+    (1, "⭐"))
+    course = models.ForeignKey(
+        Courses, on_delete=models.CASCADE, verbose_name=_("Course"))
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, verbose_name=_("User"))
+    feedback = models.TextField(
+        default=_("No feedback"), verbose_name=_("Feedback"))
+    rating = models.SmallIntegerField(
+        choices=RATING, default=5, verbose_name=_("Rating"))
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Created")
+    deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.course} ({self.user})"
