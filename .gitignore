@@ -56,6 +56,8 @@ cover/
 *.pot
 
 # Django stuff:
+var
+log
 *.log
 local_settings.py
 db.sqlite3
