@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 
 <!doctype html>
 <html lang="ru">
@@ -57,32 +57,32 @@
                 </p>
                 <p>
                 <ul class="list-unstyled">
-                    <li><a href="{% url 'mainapp:main_page' %}">Домашняя</a></li>
-                    <li><a href="{% url 'mainapp:news' %}">Новости</a></li>
+                    <li><a href="{% url 'mainapp:main_page' %}">{% translate "Home page" %}</a></li>
+                    <li><a href="{% url 'mainapp:news' %}">{% translate "News" %}</a></li>
                     {% if user.is_authenticated %}
-                    <li><a href="{% url 'authapp:logout' %}">Выйти</a></li>
+                    <li><a href="{% url 'authapp:logout' %}">{% translate "Exit" %}</a></li>
                     {% else %}
-                    <li><a href="{% url 'authapp:login' %}">Войти</a></li>
+                    <li><a href="{% url 'authapp:login' %}">{% translate "Enter" %}</a></li>
                     {% endif %}
                 </ul>
                 </p>
             </div>
             <div class="col-sm-6 col-md-3 text-center">
                 <p>
-                    <strong>Полезное</strong>
+                    <strong>{% translate "Useful" %}</strong>
                 </p>
                 <p>
                 <ul class="list-unstyled">
-                    <li><a href="#">Положения &amp; Условия</a></li>
-                    <li><a href="#">Конфиденциальность &amp; Cookies</a></li>
-                    <li><a href="#">Документация по API</a></li>
-                    <li><a href="{% url 'mainapp:doc_site' %}">Документация по сайту</a></li>
+                    <li><a href="#">{% translate "Regulations" %} &amp; {% translate "Conditions" %}</a></li>
+                    <li><a href="#">{% translate "Privacy" %} &amp; Cookies</a></li>
+                    <li><a href="#">{% translate "API documentation" %}</a></li>
+                    <li><a href="{% url 'mainapp:doc_site' %}">{% translate "Website documentation" %}</a></li>
                 </ul>
                 </p>
             </div>
             <div class="col-sm-6 col-md-3 text-center">
                 <p>
-                    <strong>Мы в социальных сетях</strong>
+                    <strong>{% translate "We in social networks" %}</strong>
                 </p>
                 <p>
                 <div class="row justify-content-around">
@@ -93,7 +93,7 @@
                 </div>
                 </p>
                 <p>
-                    <strong>Наше приложение</strong>
+                    <strong>{% translate "Our application" %}</strong>
                 </p>
                 <p>
                 <div class="row justify-content-around">

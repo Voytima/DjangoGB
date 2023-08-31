@@ -4,7 +4,15 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
+
+class CoursesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(deleted=False)
+
+
 class BaseModel(models.Model):
+    objects = CoursesManager()
+
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Creation date')
     update_at = models.DateTimeField(auto_now=True, verbose_name='Last change date')
     deleted = models.BooleanField(default=False, verbose_name='Deleted')
@@ -31,15 +39,8 @@ class News(BaseModel):
         verbose_name = _('News')
         verbose_name_plural = _('Many news')
 
-
-class CoursesManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(deleted=False)
-
-    
     
 class Courses(BaseModel):
-    objects = CoursesManager()
     name = models.CharField(max_length=256, verbose_name='Name')
     description = models.TextField(verbose_name='Description', blank=True, null=True)
     description_as_markdown = models.BooleanField(verbose_name='As markdown', default=False)
